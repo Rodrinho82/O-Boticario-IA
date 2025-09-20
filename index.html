@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Boticário IA - Generador de Contenido</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Login Modal - COMPLETAMENTE OCULTO -->
+    <div id="loginModal" class="modal auth-modal hidden" style="display: none !important;">
+        <div class="modal-content auth-content">
+            <div class="auth-header">
+                <div class="brand">
+                    <i class="fas fa-leaf brand-icon"></i>
+                    <h2>O Boticário IA</h2>
+                </div>
+            </div>
+            <div class="auth-body">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Iniciar Sesión</button>
+                    <button class="auth-tab" data-tab="register">Registrarse</button>
+                </div>
+                
+                <!-- Login Form -->
+                <div id="login-form" class="auth-form active">
+                    <h3>Bienvenido de vuelta</h3>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="loginEmail" class="form-control" value="demo@boticario.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña</label>
+                            <input type="password" id="loginPassword" class="form-control" value="demo123" required>
+                        </div>
+                        <button type="submit" class="btn-primary btn--full-width">Iniciar Sesión</button>
+                    </form>
+                </div>
+                
+                <!-- Register Form -->
+                <div id="register-form" class="auth-form">
+                    <h3>Crear cuenta nueva</h3>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label>Nombre completo</label>
+                            <input type="text" id="registerName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="registerEmail" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña</label>
+                            <input type="password" id="registerPassword" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Plan</label>
+                            <select id="registerPlan" class="form-control">
+                                <option value="free">Gratuito (50 posts/mes)</option>
+                                <option value="pro">Pro (500 posts/mes)</option>
+                                <option value="enterprise">Enterprise (Ilimitado)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary btn--full-width">Crear Cuenta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APLICACIÓN PRINCIPAL - VISIBLE INMEDIATAMENTE -->
+    <div class="app-container" id="mainApp">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="fas fa-leaf brand-icon"></i>
+                    <h2>O Boticário IA</h2>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="generador">
+                    <i class="fas fa-brain"></i>
+                    <span>Generador IA</span>
+                </a>
+                <a href="#" class="nav-item" data-section="biblioteca">
+                    <i class="fas fa-book"></i>
+                    <span>Biblioteca de Posts</span>
+                </a>
+                <a href="#" class="nav-item" data-section="productos">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Productos</span>
+                </a>
+                <a href="#" class="nav-item" data-section="calendario">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Calendario</span>
+                </a>
+                <a href="#" class="nav-item" data-section="automatizacion">
+                    <i class="fas fa-cog"></i>
+                    <span>Automatización</span>
+                </a>
+                <a href="#" class="nav-item" data-section="apis">
+                    <i class="fas fa-plug"></i>
+                    <span>APIs</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile" onclick="app.toggleUserMenu()">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Usuario" id="currentUserImg">
+                    <span id="currentUserName">Usuario Demo</span>
+                    <i class="fas fa-chevron-down user-menu-arrow"></i>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#" onclick="app.logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1>Dashboard</h1>
+                    <p>Resumen de tu actividad de contenido</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="postsGenerated">0</h3>
+                            <p>Posts generados</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="productsCount">0</h3>
+                            <p>Productos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="scheduledCount">0</h3>
+                            <p>Posts programados</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="automationRules">0</h3>
+                            <p>Reglas activas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-content">
+                    <div class="recent-activity">
+                        <h3>Actividad Reciente</h3>
+                        <div class="activity-list" id="activityList">
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h3>Acciones rápidas</h3>
+                        <div class="actions-grid">
+                            <button class="action-btn" onclick="app.switchSection('generador')">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Crear nuevo post</span>
+                            </button>
+                            <button class="action-btn" onclick="app.openAddProductModal()">
+                                <i class="fas fa-box"></i>
+                                <span>Añadir producto</span>
+                            </button>
+                            <button class="action-btn" onclick="app.openScheduleModal()">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Programar post</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generador IA Section -->
+            <section id="generador" class="content-section">
+                <div class="section-header">
+                    <h1>Generador de Contenido IA</h1>
+                    <p>Crea posts automáticamente usando inteligencia artificial</p>
+                </div>
+
+                <div class="generator-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="selectedProduct">Seleccionar Producto</label>
+                            <select id="selectedProduct" class="form-control">
+                                <option value="">Selecciona un producto</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="platform">Plataforma</label>
+                            <select id="platform" class="form-control">
+                                <option value="instagram">Instagram</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="tiktok">TikTok</option>
+                                <option value="twitter">Twitter</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contentType">Tipo de Contenido</label>
+                            <select id="contentType" class="form-control">
+                                <option value="promocional">Promocional</option>
+                                <option value="educativo">Educativo</option>
+                                <option value="lifestyle">Lifestyle</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="toneSelect">Tono</label>
+                            <select id="toneSelect" class="form-control">
+                                <option value="profesional">Profesional</option>
+                                <option value="casual">Casual</option>
+                                <option value="divertido">Divertido</option>
+                                <option value="elegante">Elegante</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postLength">Longitud del Post</label>
+                        <select id="postLength" class="form-control">
+                            <option value="corto">Corto (50-80 palabras)</option>
+                            <option value="medio">Medio (80-150 palabras)</option>
+                            <option value="largo">Largo (150-250 palabras)</option>
+                            <option value="muy_largo">Muy Largo (250-350 palabras)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="app.generateContent()" class="btn-primary generate-btn" id="generateBtn">
+                        <i class="fas fa-magic"></i>
+                        Generar Contenido
+                    </button>
+                </div>
+
+                <div id="generatedContent" class="generated-content" style="display: none;">
+                    <div class="content-header">
+                        <h3>Contenido Generado</h3>
+                        <div class="content-stats">
+                            <div class="word-counter">
+                                <span id="wordCount">0 palabras</span>
+                            </div>
+                            <div class="character-counter">
+                                <span id="charCount">0 caracteres</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-preview" id="textPreview">
+                        <p class="preview-placeholder">El contenido generado aparecerá aquí...</p>
+                    </div>
+                    <div class="content-actions">
+                        <button onclick="app.regenerateContent()" class="btn-secondary">
+                            <i class="fas fa-redo"></i>
+                            Regenerar
+                        </button>
+                        <button onclick="app.saveGeneratedPost()" class="btn-primary" id="savePostBtn" disabled>
+                            <i class="fas fa-save"></i>
+                            Guardar Post
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Biblioteca de Posts Section -->
+            <section id="biblioteca" class="content-section">
+                <div class="section-header">
+                    <h1>Biblioteca de Posts</h1>
+                    <p>Todos tus posts generados y guardados</p>
+                </div>
+
+                <div class="posts-grid" id="createdPostsGrid">
+                </div>
+            </section>
+
+            <!-- Productos Section -->
+            <section id="productos" class="content-section">
+                <div class="section-header">
+                    <h1>Productos</h1>
+                    <p>Gestiona tu catálogo de productos</p>
+                    <button class="btn-primary" onclick="app.openAddProductModal()">
+                        <i class="fas fa-plus"></i> Añadir Producto
+                    </button>
+                </div>
+
+                <div class="products-grid" id="productsGrid">
+                </div>
+            </section>
+
+            <!-- Calendario Section -->
+            <section id="calendario" class="content-section">
+                <div class="section-header">
+                    <h1>Calendario de Publicaciones</h1>
+                    <p>Programa y visualiza tus publicaciones</p>
+                    <button class="btn-primary" onclick="app.openScheduleModal()">
+                        <i class="fas fa-plus"></i> Programar Publicación
+                    </button>
+                </div>
+
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button onclick="app.previousMonth()" class="btn-secondary">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 id="currentMonth">Septiembre 2025</h3>
+                        <button onclick="app.nextMonth()" class="btn-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="calendar-grid">
+                        <div class="calendar-weekdays">
+                            <div class="weekday">Dom</div>
+                            <div class="weekday">Lun</div>
+                            <div class="weekday">Mar</div>
+                            <div class="weekday">Mié</div>
+                            <div class="weekday">Jue</div>
+                            <div class="weekday">Vie</div>
+                            <div class="weekday">Sáb</div>
+                        </div>
+                        <div class="calendar-days" id="calendarDays">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scheduled-posts">
+                    <h3>Próximas Publicaciones</h3>
+                    <div class="scheduled-list" id="upcomingPostsList">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Automatización Section -->
+            <section id="automatizacion" class="content-section">
+                <div class="section-header">
+                    <h1>Automatización</h1>
+                    <p>Configura reglas automáticas para tu contenido</p>
+                    <button class="btn-primary" onclick="app.openRuleModal()">
+                        <i class="fas fa-plus"></i> Nueva Regla
+                    </button>
+                </div>
+
+                <div class="automation-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="activeRulesCount">0</h3>
+                            <p>Reglas activas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="automatedPostsCount">0</h3>
+                            <p>Posts automatizados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rules-container">
+                    <h3>Reglas de Automatización</h3>
+                    <div class="rules-list" id="rulesList">
+                    </div>
+                </div>
+            </section>
+
+            <!-- APIs Section -->
+            <section id="apis" class="content-section">
+                <div class="section-header">
+                    <h1>APIs y Conexiones</h1>
+                    <p>Conecta tus redes sociales y servicios</p>
+                </div>
+
+                <div id="apisContainer">
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
